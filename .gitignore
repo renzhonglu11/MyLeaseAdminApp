@@ -1,0 +1,21 @@
+# Gradle caches and build outputs (root + submodules)
+.gradle/
+**/build/
+
+# IDE/editor and local tooling
+.idea/
+*.iml
+.vscode/
+.codex
+.codex/
+
+# OS and runtime noise
+.DS_Store
+Thumbs.db
+*.log
+
+# Local configuration files with sensitive data
+application-local.yml
+application-local.properties
+**/application-local.yml
+**/application-local.properties

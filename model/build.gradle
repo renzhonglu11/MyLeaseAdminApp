@@ -1,0 +1,15 @@
+plugins {
+    id 'application'
+}
+
+dependencies {
+    // This dependency is used by the application.
+    implementation libs.guava
+    implementation "jakarta.persistence:jakarta.persistence-api:${rootProject.ext.jakartaPersistenceVersion}"
+    compileOnly "org.springdoc:springdoc-openapi-starter-common:${rootProject.ext.springdocVersion}"
+}
+
+application {
+    // Define the main class for the application.
+    mainClass = 'my_project.App'
+}
