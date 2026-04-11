@@ -2,6 +2,7 @@ package com.rz.lease.model.entity;
 import lombok.Getter;
 import lombok.Setter;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import com.rz.lease.model.enums.BaseStatus;
 import com.rz.lease.model.enums.SystemUserType;
@@ -54,6 +55,7 @@ public class SystemUser extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", insertable = false, updatable = false)
+    @JsonIgnore
     private SystemPost post;
 
 

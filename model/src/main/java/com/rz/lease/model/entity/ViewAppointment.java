@@ -5,6 +5,7 @@ import lombok.Setter;
 import jakarta.persistence.*;
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.rz.lease.model.enums.AppointmentStatus;
+import com.rz.lease.model.enums.converter.AppointmentStatusConverter;
 import java.util.Date;
 
 @Schema(description = "Viewing appointment information table")
@@ -43,6 +44,7 @@ public class ViewAppointment extends BaseEntity {
 
     @Schema(description = "Appointment status")
     @Column(name = "appointment_status")
+    @Convert(converter = AppointmentStatusConverter.class)
     private AppointmentStatus appointmentStatus;
 
     @ManyToOne(fetch = FetchType.LAZY)

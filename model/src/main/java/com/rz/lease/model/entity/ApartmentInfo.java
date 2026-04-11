@@ -5,6 +5,7 @@ import lombok.Setter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import com.rz.lease.model.enums.ReleaseStatus;
+import com.rz.lease.model.enums.converter.ReleaseStatusConverter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 
@@ -67,18 +68,22 @@ public class ApartmentInfo extends BaseEntity {
 
     @Schema(description = "Published")
     @Column(name = "is_release")
+    @Convert(converter = ReleaseStatusConverter.class)
     private ReleaseStatus isRelease;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "district_id", insertable = false, updatable = false)
+    @JsonIgnore
     private DistrictInfo district;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "city_id", insertable = false, updatable = false)
+    @JsonIgnore
     private CityInfo city;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "province_id", insertable = false, updatable = false)
+    @JsonIgnore
     private ProvinceInfo province;
 
     @JsonIgnore

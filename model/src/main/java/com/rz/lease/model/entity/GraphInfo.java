@@ -5,6 +5,7 @@ import lombok.Setter;
 import jakarta.persistence.*;
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.rz.lease.model.enums.ItemType;
+import com.rz.lease.model.enums.converter.ItemTypeConverter;
 
 @Schema(description = "Image information table")
 @Entity
@@ -21,6 +22,7 @@ public class GraphInfo extends BaseEntity {
 
     @Schema(description = "Image owner object type")
     @Column(name = "item_type")
+    @Convert(converter = ItemTypeConverter.class)
     private ItemType itemType;
 
     @Schema(description = "Image owner object id")

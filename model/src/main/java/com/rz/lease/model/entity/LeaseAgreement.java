@@ -5,6 +5,7 @@ import lombok.Setter;
 import jakarta.persistence.*;
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.rz.lease.model.enums.LeaseSourceType;
 import com.rz.lease.model.enums.LeaseStatus;
 import java.math.BigDecimal;
@@ -81,18 +82,22 @@ public class LeaseAgreement extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "apartment_id", insertable = false, updatable = false)
+    @JsonIgnore
     private ApartmentInfo apartment;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id", insertable = false, updatable = false)
+    @JsonIgnore
     private RoomInfo room;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lease_term_id", insertable = false, updatable = false)
+    @JsonIgnore
     private LeaseTerm leaseTerm;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "payment_type_id", insertable = false, updatable = false)
+    @JsonIgnore
     private PaymentType paymentType;
 
 

@@ -14,11 +14,13 @@ public abstract class BaseEnumConverter<E extends Enum<E> & BaseEnum>
         this.enumClass = enumClass;
     }
 
+    // Convert the enum to its corresponding code for database storage
     @Override
     public Integer convertToDatabaseColumn(E attribute) {
         return attribute == null ? null : attribute.getCode();
     }
 
+    // Convert the code from the database back to the enum
     @Override
     public E convertToEntityAttribute(Integer dbData) {
         if (dbData == null) {

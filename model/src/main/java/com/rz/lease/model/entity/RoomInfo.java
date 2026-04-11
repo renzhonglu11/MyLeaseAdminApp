@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.rz.lease.model.enums.ReleaseStatus;
+import com.rz.lease.model.enums.converter.ReleaseStatusConverter;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -32,10 +33,12 @@ public class RoomInfo extends BaseEntity {
 
     @Schema(description = "Published")
     @Column(name = "is_release")
+    @Convert(converter = ReleaseStatusConverter.class)
     private ReleaseStatus isRelease;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "apartment_id", insertable = false, updatable = false)
+    @JsonIgnore
     private ApartmentInfo apartment;
 
     @JsonIgnore
