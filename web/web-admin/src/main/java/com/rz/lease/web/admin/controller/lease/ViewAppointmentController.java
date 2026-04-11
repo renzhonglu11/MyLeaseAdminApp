@@ -2,6 +2,7 @@ package com.rz.lease.web.admin.controller.lease;
 
 import com.rz.lease.common.result.Result;
 import com.rz.lease.model.enums.AppointmentStatus;
+import com.rz.lease.web.admin.service.ViewAppointmentService;
 import com.rz.lease.web.admin.vo.appointment.AppointmentQueryVo;
 import com.rz.lease.web.admin.vo.appointment.AppointmentVo;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,6 +15,12 @@ import java.util.List;
 @RestController
 public class ViewAppointmentController {
 
+    private ViewAppointmentService viewAppointmentService;
+
+    public ViewAppointmentController(ViewAppointmentService viewAppointmentService) {
+        this.viewAppointmentService = viewAppointmentService;
+    }
+
     @Operation(summary = "Query appointment information by page")
     @GetMapping("page")
     public Result<List<AppointmentVo>> page(@RequestParam long current, @RequestParam long size,
@@ -24,6 +31,7 @@ public class ViewAppointmentController {
     @Operation(summary = "Update appointment status by ID")
     @PostMapping("updateStatusById")
     public Result updateStatusById(@RequestParam Long id, @RequestParam AppointmentStatus status) {
+        viewAppointmentService.updateStatusById(id, status);
         return Result.ok();
     }
 

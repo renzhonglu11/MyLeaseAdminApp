@@ -1,16 +1,29 @@
 package com.rz.lease.web.admin.service.impl;
+
 import com.rz.lease.model.entity.ViewAppointment;
+import com.rz.lease.model.enums.AppointmentStatus;
 import com.rz.lease.web.admin.service.ViewAppointmentService;
 import com.rz.lease.web.admin.repository.ViewAppointmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 /**
-* @author liubo
-* @description 数据库操作Service实现
-* @createDate 2023-07-24 15:48:00
-*/
+ * @author liubo
+ * @description 数据库操作Service实现
+ * @createDate 2023-07-24 15:48:00
+ */
 @Service
 public class ViewAppointmentServiceImpl implements ViewAppointmentService {
     @Autowired
     private ViewAppointmentRepository viewAppointmentRepository;
+
+    @Override
+    public void updateStatusById(Long id, AppointmentStatus status) {
+        ViewAppointment appointment = viewAppointmentRepository.findById(id).orElse(null);
+        if (appointment != null) {
+            appointment.setAppointmentStatus(status);
+            viewAppointmentRepository.save(appointment);
+        }
+
+    }
 }
