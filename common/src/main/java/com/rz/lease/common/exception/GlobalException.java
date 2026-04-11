@@ -18,11 +18,23 @@ public class GlobalException {
     @ExceptionHandler(Exception.class)
     @ResponseBody
     public Object handle(Exception e) {
-        if ("org.springframework.web.servlet.resource.NoResourceFoundException".equals(e.getClass().getName())) {
-            return ResponseEntity.notFound().build();
-        }
+        // if
+        // ("org.springframework.web.servlet.resource.NoResourceFoundException".equals(e.getClass().getName()))
+        // {
+        // return ResponseEntity.notFound().build();
+        // }
 
-        log.log(Level.SEVERE, "Unhandled application exception", e);
+        // log.log(Level.SEVERE, "Unhandled application exception", e);
+        e.printStackTrace();
         return Result.fail();
     }
+
+    @ExceptionHandler(LeaseException.class)
+    @ResponseBody
+    public Object handle(LeaseException e) {
+        e.printStackTrace();
+
+        return Result.fail(e.getCode(), e.getMessage());
+    }
+
 }
