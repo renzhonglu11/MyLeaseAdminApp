@@ -7,8 +7,9 @@ import com.rz.lease.web.admin.vo.appointment.AppointmentQueryVo;
 import com.rz.lease.web.admin.vo.appointment.AppointmentVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
 
 @Tag(name = "Appointment viewing management")
 @RequestMapping("/admin/appointment")
@@ -23,9 +24,10 @@ public class ViewAppointmentController {
 
     @Operation(summary = "Query appointment information by page")
     @GetMapping("page")
-    public Result<List<AppointmentVo>> page(@RequestParam long current, @RequestParam long size,
+    public Result<Page<AppointmentVo>> page(@RequestParam long current, @RequestParam long size,
             AppointmentQueryVo queryVo) {
-        return Result.ok();
+
+        return Result.ok(viewAppointmentService.pageItems(current, size, queryVo));
     }
 
     @Operation(summary = "Update appointment status by ID")
