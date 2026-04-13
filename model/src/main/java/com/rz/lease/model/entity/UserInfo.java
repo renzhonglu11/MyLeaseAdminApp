@@ -1,4 +1,5 @@
 package com.rz.lease.model.entity;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -6,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.rz.lease.model.enums.BaseStatus;
+import com.rz.lease.model.enums.converter.BaseStatusConverter;
 import java.util.List;
 
 @Schema(description = "User information table")
@@ -35,6 +37,7 @@ public class UserInfo extends BaseEntity {
 
     @Schema(description = "Account status")
     @Column(name = "status")
+    @Convert(converter = BaseStatusConverter.class)
     private BaseStatus status;
 
     @JsonIgnore
@@ -44,10 +47,5 @@ public class UserInfo extends BaseEntity {
     @JsonIgnore
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<ViewAppointment> viewAppointments;
-
-
-
-
-
 
 }
