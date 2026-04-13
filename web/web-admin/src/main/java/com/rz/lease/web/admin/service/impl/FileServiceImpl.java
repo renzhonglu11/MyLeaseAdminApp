@@ -26,7 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * @author liubo
+ * @author rz
  * @description Service实现
  * @createDate 2023-07-24 15:48:00
  */

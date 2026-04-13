@@ -10,11 +10,12 @@ import com.rz.lease.web.admin.repository.FacilityInfoRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 /**
-* @author liubo
-* @description 数据库操作Service实现
-* @createDate 2023-07-24 15:48:00
-*/
+ * @author rz
+ * @description 数据库操作Service实现
+ * @createDate 2023-07-24 15:48:00
+ */
 @Service
 public class FacilityInfoServiceImpl implements FacilityInfoService {
     @Autowired

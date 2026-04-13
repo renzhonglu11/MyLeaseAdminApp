@@ -12,7 +12,7 @@ import com.rz.lease.web.admin.vo.apartment.ApartmentQueryVo;
 import com.rz.lease.web.admin.vo.apartment.ApartmentSubmitVo;
 
 /**
- * @author liubo
+ * @author rz
  * @description 针对表【apartment_info(公寓信息表)】的数据库操作Service
  * @createDate 2023-07-24 15:48:00
  */

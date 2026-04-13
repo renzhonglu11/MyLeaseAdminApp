@@ -61,10 +61,10 @@ import java.util.Map;
 import java.util.Set;
 
 /**
-* @author liubo
-* @description 针对表的数据库操作Service实现
-* @createDate 2023-07-24 15:48:00
-*/
+ * @author rz
+ * @description 针对表的数据库操作Service实现
+ * @createDate 2023-07-24 15:48:00
+ */
 @Service
 public class RoomInfoServiceImpl implements RoomInfoService {
     private static final Set<LeaseStatus> OCCUPIED_LEASE_STATUSES = EnumSet.of(
@@ -188,8 +188,8 @@ public class RoomInfoServiceImpl implements RoomInfoService {
         }
 
         List<GraphVo> graphVoList = graphInfoRepository.findAll((root, query, cb) -> cb.and(
-                        cb.equal(root.get("itemType"), ItemType.ROOM),
-                        cb.equal(root.get("itemId"), id)))
+                cb.equal(root.get("itemType"), ItemType.ROOM),
+                cb.equal(root.get("itemId"), id)))
                 .stream()
                 .map(graphInfo -> GraphVo.builder()
                         .name(graphInfo.getName())
