@@ -1,4 +1,5 @@
 package com.rz.lease.model.entity;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -6,6 +7,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import com.rz.lease.model.enums.BaseStatus;
 import com.rz.lease.model.enums.SystemUserType;
+import com.rz.lease.model.enums.converter.BaseStatusConverter;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "Staff information")
@@ -51,19 +54,12 @@ public class SystemUser extends BaseEntity {
 
     @Schema(description = "Account status")
     @Column(name = "status")
+    @Convert(converter = BaseStatusConverter.class)
     private BaseStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", insertable = false, updatable = false)
     @JsonIgnore
     private SystemPost post;
-
-
-
-
-
-
-
-
 
 }

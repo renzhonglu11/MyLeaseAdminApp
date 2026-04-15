@@ -6,4 +6,5 @@ dependencies {
     implementation 'org.springframework:spring-context'
     implementation 'org.springframework.boot:spring-boot'
     implementation 'org.springframework:spring-web'
+    implementation "commons-codec:commons-codec:${commonsCodecVersion}"
 }

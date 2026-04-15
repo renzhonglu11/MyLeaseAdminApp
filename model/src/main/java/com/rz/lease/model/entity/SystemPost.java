@@ -1,10 +1,12 @@
 package com.rz.lease.model.entity;
+
 import lombok.Getter;
 import lombok.Setter;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import com.rz.lease.model.enums.BaseStatus;
+import com.rz.lease.model.enums.converter.BaseStatusConverter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 
@@ -30,13 +32,11 @@ public class SystemPost extends BaseEntity {
 
     @Schema(description = "Post status")
     @Column(name = "status")
+    @Convert(converter = BaseStatusConverter.class)
     private BaseStatus status;
 
     @JsonIgnore
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
     private List<SystemUser> systemUsers;
-
-
-
 
 }
