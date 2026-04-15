@@ -1,6 +1,9 @@
 package com.rz.lease.web.admin.service;
 
+import java.util.List;
+
 import com.rz.lease.model.entity.SystemUser;
+import com.rz.lease.model.enums.BaseStatus;
 import com.rz.lease.web.admin.vo.system.user.SystemUserItemVo;
 import com.rz.lease.web.admin.vo.system.user.SystemUserQueryVo;
 
@@ -10,4 +13,16 @@ import com.rz.lease.web.admin.vo.system.user.SystemUserQueryVo;
  * @createDate 2023-07-24 15:48:00
  */
 public interface SystemUserService {
+
+    void saveOrUpdate(SystemUser systemUser);
+
+    List<SystemUserItemVo> page(long current, long size, SystemUserQueryVo queryVo);
+
+    SystemUserItemVo getById(Long id);
+
+    Boolean isUsernameExists(String username);
+
+    boolean removeById(Long id);
+
+    void updateStatusByUserId(Long id, BaseStatus status);
 }
