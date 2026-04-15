@@ -122,6 +122,13 @@ From the current uncommitted diff:
 - lazy many-to-one associations on `RoomInfo`, `ApartmentInfo`, `LeaseAgreement`, and `SystemUser` are `@JsonIgnore`
 - `WebAdminApplication` enables Spring Data page serialization mode `VIA_DTO` to avoid `PageImpl` warning logs
 
+6. `SystemUserServiceImpl.page(...)` is now implemented:
+
+- paginates by `id` ascending
+- filters by `name` and `phone`
+- maps `SystemUser` rows into `SystemUserItemVo`
+- enriches each row with `postName` via `SystemPostRepository`
+
 ## Known gaps visible from current code
 
 `ApartmentController` has multiple endpoints that currently return empty `Result.ok()` placeholders and appear unfinished:
