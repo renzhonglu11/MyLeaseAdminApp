@@ -1,9 +1,7 @@
 package com.rz.lease.common.exception;
 
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
