@@ -14,9 +14,9 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 /**
@@ -28,13 +28,15 @@ import org.springframework.stereotype.Service;
 public class SystemUserServiceImpl implements SystemUserService {
     @Autowired
     private SystemUserRepository systemUserRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public void saveOrUpdate(SystemUser systemUser) {
         Long id = systemUser.getId();
         if (id == null) {
             if (systemUser.getPassword() != null && !systemUser.getPassword().isBlank()) {
-                systemUser.setPassword(DigestUtils.md5Hex(systemUser.getPassword()));
+                systemUser.setPassword(passwordEncoder.encode(systemUser.getPassword()));
             }
             systemUserRepository.save(systemUser);
             return;
@@ -45,7 +47,7 @@ public class SystemUserServiceImpl implements SystemUserService {
 
         existing.setUsername(systemUser.getUsername());
         if (systemUser.getPassword() != null && !systemUser.getPassword().isBlank()) {
-            existing.setPassword(DigestUtils.md5Hex(systemUser.getPassword()));
+            existing.setPassword(passwordEncoder.encode(systemUser.getPassword()));
         }
         existing.setName(systemUser.getName());
         existing.setType(systemUser.getType());

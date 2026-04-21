@@ -71,4 +71,12 @@ public interface SystemUserRepository extends BaseJpaRepository<SystemUser> {
             """)
     boolean existsByUsernameIgnoreCaseAndNotDeleted(@Param("username") String username);
 
+    @Query("""
+            select u
+            from SystemUser u
+            where lower(u.username) = lower(:username)
+                    and (u.isDeleted = 0 or u.isDeleted is null)
+            """)
+    Optional<SystemUser> findActiveByUsername(@Param("username") String username);
+
 }

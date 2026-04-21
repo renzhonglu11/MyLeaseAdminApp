@@ -1,6 +1,7 @@
 package com.rz.lease.web.admin.controller.login;
 
 import com.rz.lease.common.result.Result;
+import com.rz.lease.web.admin.service.LoginService;
 import com.rz.lease.web.admin.vo.login.CaptchaVo;
 import com.rz.lease.web.admin.vo.login.LoginVo;
 import com.rz.lease.web.admin.vo.system.user.SystemUserInfoVo;
@@ -13,16 +14,25 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/admin")
 public class LoginController {
 
+    private LoginService loginService;
+
+    public LoginController(LoginService loginService) {
+        this.loginService = loginService;
+    }
+
     @Operation(summary = "Get graphic verification code")
     @GetMapping("login/captcha")
     public Result<CaptchaVo> getCaptcha() {
-        return Result.ok();
+
+        CaptchaVo captchaVo = loginService.getCaptcha();
+        return Result.ok(captchaVo);
     }
 
     @Operation(summary = "Login")
     @PostMapping("login")
     public Result<String> login(@RequestBody LoginVo loginVo) {
-        return Result.ok();
+        String jwt = loginService.login(loginVo);
+        return Result.ok(jwt);
     }
 
     @Operation(summary = "Get logged in user personal information")

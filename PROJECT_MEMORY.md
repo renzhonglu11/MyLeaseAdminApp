@@ -1,6 +1,6 @@
 # Project Memory
 
-Generated from the current workspace on 2026-04-07.
+Generated from the current workspace on 2026-04-17.
 
 This file is a repo-derived snapshot, not a durable assistant memory store. It reflects:
 
@@ -32,10 +32,19 @@ Shared build characteristics from `build.gradle`:
 - Spring Boot `3.5.9`
 - Java toolchain `21`
 - Spring dependency management
-- MySQL connector
+- MySQL connector added as `runtimeOnly` for Spring Boot application modules
+- Spring Boot test starter added for Spring Boot application modules
 - Lombok
 - MinIO
 - JUnit 5
+
+Current Gradle structure notes:
+
+- `model` is now a `java-library` module rather than an `application`
+- Gradle init-template leftovers were removed from `model` (`my_project.App` and its generated test)
+- `common` and nested modules now rely more on root shared conventions instead of repeating repository/test boilerplate
+- `web` is acting as an aggregator project for `web:web-admin` and `web:web-app`
+- `web:web-app` now has explicit Boot app dependencies on `common`, `model`, and `spring-boot-starter-web`
 
 ## Entry points
 
@@ -90,6 +99,18 @@ Free-room calculation logic currently treats these lease statuses as occupied:
 - `RENEWING`
 
 ## Visible in-progress implementation
+
+6. Admin login authentication has moved toward Spring Security primitives:
+
+- `web/web-admin` now includes Spring Security starter and a baseline `SecurityConfig`.
+- `LoginServiceImpl.login(...)` now uses `AuthenticationManager` for username/password authentication after captcha verification.
+- Password storage in `SystemUserServiceImpl.saveOrUpdate(...)` now uses `BCrypt` via `PasswordEncoder` instead of MD5.
+- Added `AdminUserDetailsService` to load active users from `SystemUserRepository` for security authentication.
+- `common` `jwtUtils` is now a Spring bean (`@Component`) and is used by login to issue JWTs.
+
+Current caveat:
+
+- Existing DB users still stored with MD5 hashes will fail AuthenticationManager password checks until migrated to BCrypt.
 
 From the current uncommitted diff:
 
