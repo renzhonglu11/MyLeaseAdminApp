@@ -18,6 +18,13 @@ subprojects {
         mavenCentral()
     }
 
+    plugins.withId('org.springframework.boot') {
+        dependencies {
+            runtimeOnly "com.mysql:mysql-connector-j:${rootProject.ext.mysqlVersion}"
+            testImplementation 'org.springframework.boot:spring-boot-starter-test'
+        }
+    }
+
     plugins.withId('java') {
         apply plugin: 'io.spring.dependency-management'
 
@@ -36,11 +43,8 @@ subprojects {
         dependencies {
             testImplementation libs.junit.jupiter
             testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-            implementation "com.fasterxml.jackson.core:jackson-annotations"
-            implementation "com.mysql:mysql-connector-j:${mysqlVersion}"
             compileOnly "org.projectlombok:lombok:${lombokVersion}"
             annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
-            implementation "io.minio:minio:${minioVersion}"
 
         }
 

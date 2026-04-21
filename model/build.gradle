@@ -1,15 +1,9 @@
 plugins {
-    id 'application'
+    id 'java-library'
 }
 
 dependencies {
-    // This dependency is used by the application.
-    implementation libs.guava
+    implementation "com.fasterxml.jackson.core:jackson-annotations"
     implementation "jakarta.persistence:jakarta.persistence-api:${rootProject.ext.jakartaPersistenceVersion}"
     compileOnly "org.springdoc:springdoc-openapi-starter-common:${rootProject.ext.springdocVersion}"
-}
-
-application {
-    // Define the main class for the application.
-    mainClass = 'my_project.App'
 }

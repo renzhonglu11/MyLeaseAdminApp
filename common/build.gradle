@@ -3,8 +3,8 @@ plugins {
 }
 
 dependencies {
-    implementation 'org.springframework:spring-context'
-    implementation 'org.springframework.boot:spring-boot'
-    implementation 'org.springframework:spring-web'
-    implementation "commons-codec:commons-codec:${commonsCodecVersion}"
+    api 'com.github.whvcse:easy-captcha:1.6.2'
+    api 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "io.minio:minio:${rootProject.ext.minioVersion}"
 }

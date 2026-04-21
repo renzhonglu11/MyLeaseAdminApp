@@ -2,3 +2,9 @@ plugins {
     id 'java'
     id 'org.springframework.boot'
 }
+
+dependencies {
+    implementation project(':common')
+    implementation project(':model')
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+}
