@@ -6,8 +6,10 @@ import com.rz.lease.model.entity.SystemUser;
 import com.rz.lease.model.enums.BaseStatus;
 import com.rz.lease.web.admin.repository.SystemUserRepository;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -34,13 +36,12 @@ public class AdminUserDetailsService implements UserDetailsService {
             throw new LeaseException(ResultCodeEnum.ADMIN_ACCOUNT_ERROR);
         }
 
-        boolean disabled = systemUser.getStatus() == BaseStatus.DISABLE;
-
-        return User.builder()
-                .username(systemUser.getUsername())
-                .password(encodedPassword)
-                .disabled(disabled)
-                .authorities("ROLE_ADMIN")
-                .build();
+        boolean enabled = systemUser.getStatus() != BaseStatus.DISABLE;
+        return new AdminUserPrincipal(
+                systemUser.getId(),
+                systemUser.getUsername(),
+                encodedPassword,
+                enabled,
+                List.of(new SimpleGrantedAuthority("ROLE_ADMIN")));
     }
 }

@@ -5,6 +5,7 @@ import com.rz.lease.common.result.ResultCodeEnum;
 import com.rz.lease.model.entity.SystemUser;
 import com.rz.lease.model.enums.BaseStatus;
 import com.rz.lease.web.admin.service.SystemUserService;
+import com.rz.lease.web.admin.vo.system.user.SystemUserInfoVo;
 import com.rz.lease.web.admin.vo.system.user.SystemUserItemVo;
 import com.rz.lease.web.admin.vo.system.user.SystemUserQueryVo;
 import com.rz.lease.web.admin.repository.SystemUserRepository;
@@ -85,6 +86,17 @@ public class SystemUserServiceImpl implements SystemUserService {
     public SystemUserItemVo getById(Long id) {
         return systemUserRepository.getItemById(id)
                 .orElseThrow(() -> new LeaseException(ResultCodeEnum.ADMIN_ACCOUNT_NOT_EXIST_ERROR));
+    }
+
+    @Override
+    public SystemUserInfoVo getUserInfoById(Long id) {
+        SystemUserItemVo itemVo = systemUserRepository.getItemById(id)
+                .orElseThrow(() -> new LeaseException(ResultCodeEnum.ADMIN_ACCOUNT_NOT_EXIST_ERROR));
+
+        SystemUserInfoVo infoVo = new SystemUserInfoVo();
+        infoVo.setName(itemVo.getName());
+        infoVo.setAvatarUrl(itemVo.getAvatarUrl());
+        return infoVo;
     }
 
     @Override

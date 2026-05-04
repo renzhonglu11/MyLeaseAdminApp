@@ -3,6 +3,8 @@ package com.rz.lease.web.admin.service.impl;
 import com.rz.lease.common.constant.RedisConstant;
 import com.rz.lease.common.exception.LeaseException;
 import com.rz.lease.common.result.ResultCodeEnum;
+import com.rz.lease.model.entity.SystemUser;
+import com.rz.lease.web.admin.repository.SystemUserRepository;
 import com.rz.lease.web.admin.security.JwtUtils;
 import com.rz.lease.web.admin.service.LoginService;
 import com.rz.lease.web.admin.vo.login.CaptchaVo;
@@ -36,6 +38,8 @@ public class LoginServiceImpl implements LoginService {
     private AuthenticationManager authenticationManager;
     @Autowired
     private JwtUtils jwtUtils;
+    @Autowired
+    private SystemUserRepository systemUserRepository;
 
     @Override
     public CaptchaVo getCaptcha() {
@@ -96,7 +100,10 @@ public class LoginServiceImpl implements LoginService {
             throw new LeaseException(ResultCodeEnum.ADMIN_ACCOUNT_DISABLED_ERROR);
         }
 
-        return jwtUtils.generateToken(normalizedUsername);
+        SystemUser systemUser = systemUserRepository.findActiveByUsername(normalizedUsername)
+                .orElseThrow(() -> new LeaseException(ResultCodeEnum.ADMIN_ACCOUNT_ERROR));
+
+        return jwtUtils.generateToken(normalizedUsername, systemUser.getId());
 
     }
 }

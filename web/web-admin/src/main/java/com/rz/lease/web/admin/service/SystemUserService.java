@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.rz.lease.model.entity.SystemUser;
 import com.rz.lease.model.enums.BaseStatus;
+import com.rz.lease.web.admin.vo.system.user.SystemUserInfoVo;
 import com.rz.lease.web.admin.vo.system.user.SystemUserItemVo;
 import com.rz.lease.web.admin.vo.system.user.SystemUserQueryVo;
 
@@ -19,6 +20,8 @@ public interface SystemUserService {
     List<SystemUserItemVo> page(long current, long size, SystemUserQueryVo queryVo);
 
     SystemUserItemVo getById(Long id);
+
+    SystemUserInfoVo getUserInfoById(Long id);
 
     Boolean isUsernameExists(String username);
 

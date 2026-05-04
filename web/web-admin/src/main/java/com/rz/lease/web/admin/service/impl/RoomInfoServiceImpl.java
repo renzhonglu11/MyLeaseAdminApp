@@ -1,5 +1,6 @@
 package com.rz.lease.web.admin.service.impl;
 
+import com.rz.lease.common.constant.RedisConstant;
 import com.rz.lease.model.entity.ApartmentInfo;
 import com.rz.lease.model.entity.AttrKey;
 import com.rz.lease.model.entity.AttrValue;
@@ -50,6 +51,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -103,6 +105,8 @@ public class RoomInfoServiceImpl implements RoomInfoService {
     private LeaseTermRepository leaseTermRepository;
     @Autowired
     private LeaseAgreementRepository leaseAgreementRepository;
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
 
     @Transactional
     @Override
@@ -126,6 +130,11 @@ public class RoomInfoServiceImpl implements RoomInfoService {
 
         Long roomId = roomInfo.getId();
         deleteExistingRelations(roomId);
+
+        // Delete cache in redis
+        String key = RedisConstant.APP_ROOM_PREFIX + roomSubmitVo.getId();
+        redisTemplate.delete(key);
+
         saveAttrValueRelations(roomId, roomSubmitVo.getAttrValueIds());
         saveFacilityRelations(roomId, roomSubmitVo.getFacilityInfoIds());
         saveLabelRelations(roomId, roomSubmitVo.getLabelInfoIds());
@@ -251,6 +260,10 @@ public class RoomInfoServiceImpl implements RoomInfoService {
                 .orElseThrow(() -> new RuntimeException("RoomInfo not found"));
         deleteExistingRelations(id);
         roomInfoRepository.delete(roomInfo);
+
+        // Delete cache in redis
+        String key = RedisConstant.APP_ROOM_PREFIX + id;
+        redisTemplate.delete(key);
     }
 
     @Transactional
