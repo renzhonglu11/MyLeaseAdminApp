@@ -1,0 +1,15 @@
+.git
+.gradle
+**/build
+**/.idea
+**/.vscode
+**/*.iml
+**/*.log
+**/application-local.yml
+**/application-local.properties
+rentHouseAdmin/node_modules
+rentHouseAdmin/dist
+rentHouseAdmin
+.env
+.env.*
+!.env.web-admin.example

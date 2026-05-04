@@ -15,7 +15,12 @@ Thumbs.db
 *.log
 
 # Local configuration files with sensitive data
+.env
+.env.*
+!.env.web-admin.example
 application-local.yml
 application-local.properties
 **/application-local.yml
 **/application-local.properties
+
+rentHouseAdmin

@@ -11,9 +11,15 @@ This file is a repo-derived snapshot, not a durable assistant memory store. It r
 ## Current repo state
 
 - Git history is minimal: `f4d1f14 Initial project commit`
-- There are 2 uncommitted Java changes visible right now:
-  - `web/web-admin/src/main/java/com/rz/lease/web/admin/service/impl/ApartmentInfoServiceImpl.java`
-  - `web/web-admin/src/main/java/com/rz/lease/web/admin/vo/apartment/ApartmentItemVo.java`
+- There are uncommitted changes in the workspace. Do not assume all changes were made by the current assistant session.
+- Recent deployment-related changes added a Docker Compose setup for the admin backend:
+  - `docker-compose.web-admin.yml`
+  - `web/web-admin/Dockerfile`
+  - `.dockerignore`
+  - `.env.web-admin.example`
+- `web/web-admin/src/main/resources/application.yml` now reads DB, Redis, MinIO, and JWT values from environment variables while keeping local defaults.
+- Admin `JwtUtils` now reads `jwt.secret` from configuration instead of using only a hardcoded signing key.
+- The Docker Compose admin stack sets `SPRING_JPA_HIBERNATE_DDL_AUTO=none` by default because the sample schema is imported from `sql_scripts/lease.sql`; this avoids Hibernate schema-update attempts on production/startup.
 
 ## Project shape
 
@@ -52,7 +58,34 @@ Current Gradle structure notes:
   - Scans `com.rz.lease`
   - Uses JPA entity scan for `com.rz.lease.model.entity`
   - Enables custom base repository implementation for admin repositories
-- App module: `web/web-app/src/main/java/web/app/WebAppApplication.java`
+- App module: `web/web-app/src/main/java/com/rz/lease/WebAppApplication.java`
+
+## App module package migration
+
+- `web/web-app/src/main/java/com/rz/lease/web/app` has been normalized to the `com.rz.lease.web.app` package root.
+- Stale `com.atguigu.lease...` imports in `web-app` Java sources were rewritten to `com.rz.lease...`.
+- The old `web/web-app/src/main/java/web/app/WebAppApplication.java` entrypoint is deleted in favor of the `com.rz.lease` entrypoint.
+
+## App module JPA migration
+
+- `web:web-app` now uses Spring Data JPA like `web:web-admin`, not MyBatis-Plus.
+- `web/web-app/build.gradle` includes `spring-boot-starter-data-jpa`, `spring-boot-starter-data-redis`, and Springdoc UI dependencies.
+- `web:web-app` has local resource config for MySQL, Redis, MinIO, and JPA; JPA DDL generation is disabled with `spring.jpa.hibernate.ddl-auto=none`.
+- App login code generation no longer uses Aliyun SMS. `LoginServiceImpl.sendCode(...)` stores the verification code in Redis and logs it for local development/testing.
+- `WebAppApplication` now scans `com.rz.lease`, entity-scans `com.rz.lease.model.entity`, enables Spring Data page DTO serialization, and enables JPA repositories under `com.rz.lease.web.app.repository`.
+- App mapper interfaces under `web/web-app/.../mapper` and generated MyBatis service implementations were removed from the compilation path.
+- App services/controllers now use repository-backed JPA implementations and Spring Data `Page`/`Pageable` instead of MyBatis `IPage`, `Page`, wrappers, or `IService`.
+- A small shared app login utility set was added under `common`:
+  - `common.login.LoginUser`
+  - `common.login.LoginUserHolder`
+  - `common.utils.CodeUtil`
+  - `common.utils.JwtUtil`
+  - app Redis constants in `RedisConstant`
+- `web:web-app` now uses Spring Security for app JWT authentication. `AppJwtAuthenticationFilter` parses `Authorization: Bearer ...` or `token` headers, stores the parsed user in both `SecurityContextHolder` and `LoginUserHolder`, and clears the thread-local after the request.
+- `AppSecurityConfig` keeps public app browsing endpoints open (`/app/login`, `/app/login/getCode`, room/apartment/region/payment/term endpoints, and Swagger) while requiring authentication for user-specific endpoints such as `/app/info`, history, appointment, and agreement APIs.
+- App Swagger/OpenAPI now declares a bearer JWT security scheme, so Swagger UI has an Authorize control for setting the app token.
+- App room detail retrieval remains public; it can use Redis room-detail caching via `app.room-detail-cache.enabled` and saves browsing history only when a login user is present, avoiding anonymous-request NPEs.
+- Verification: `./gradlew :web:web-app:compileJava` succeeds, and `./gradlew :web:web-app:bootRun` starts successfully on port `8081` with the `local` profile. Remaining compile output is Lombok superclass `equals/hashCode` warnings on VO classes.
 
 ## Domain understanding
 
@@ -107,6 +140,8 @@ Free-room calculation logic currently treats these lease statuses as occupied:
 - Password storage in `SystemUserServiceImpl.saveOrUpdate(...)` now uses `BCrypt` via `PasswordEncoder` instead of MD5.
 - Added `AdminUserDetailsService` to load active users from `SystemUserRepository` for security authentication.
 - `common` `jwtUtils` is now a Spring bean (`@Component`) and is used by login to issue JWTs.
+- Added custom admin principal `AdminUserPrincipal` (`UserDetails`) carrying `id`; `AdminUserDetailsService` now returns it.
+- `/admin/info` now reads current user id from this principal and delegates to `SystemUserService.getUserInfoById(...)` instead of `UserInfoService`.
 
 Current caveat:
 
