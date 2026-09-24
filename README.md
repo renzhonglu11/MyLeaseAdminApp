@@ -1,4 +1,4 @@
-# Lease
+# Lease(Learning project)
 
 <p align="center">
   <strong>Apartment inventory, leasing, appointments, and user management in one platform.</strong>

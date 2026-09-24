@@ -1,99 +1,100 @@
-## 后台管理系统
+# Lease 管理后台
 
-采用 vue3 全家桶（vite+pinia+element-plus+vue-router@4）
+Lease 租赁管理平台的 Web 管理端，用于管理公寓、房间、租约、看房预约、租客与后台用户。
 
-查看[更新日志](./CHANGELOG.md)
+本目录是 Lease 单仓库的前端部分；整体架构、后端启动方式和 Docker 配置请参阅项目根目录的 [README.zh-CN.md](../README.zh-CN.md)。
 
-## 使用方式
+## 技术栈
 
-### install
+- Vue 3 + TypeScript
+- Vite 4
+- Element Plus
+- Pinia
+- Vue Router
+- Axios
+- Sass
+
+## 环境要求
+
+- Node.js 18+
+- npm
+- 默认运行在 `http://localhost:8080` 的 Lease 管理端 API
+
+## 配置
+
+在项目根目录执行：
 
 ```bash
-npm install
+cp rentHouseAdmin/.env.example rentHouseAdmin/.env.development
 ```
 
-### run
+根据本地环境编辑 `rentHouseAdmin/.env.development`：
+
+| 变量 | 用途 | 默认示例 |
+| --- | --- | --- |
+| `VITE_APP_NODE_ENV` | 当前运行环境 | `development` |
+| `VITE_APP_TITLE` | 管理后台标题 | `后台管理` |
+| `VITE_APP_BASE_URL` | Vite 将 `/admin` 请求代理到的后端地址 | `http://localhost:8080` |
+| `VITE_AMAP_MAP_KEY` | 高德地图 Web 端 Key | 需要地图功能时填写 |
+| `VITE_AMAP_MAP_SECRET_KEY` | 高德地图安全密钥 | 需要地图功能时填写 |
+
+`.env*` 本地配置已被 Git 忽略。请勿把真实 Key、Token 或生产环境凭据写入可提交文件。
+
+## 安装与启动
 
 ```bash
+cd rentHouseAdmin
+npm ci
 npm run dev
 ```
 
-### build
+Vite 默认开发地址为 `http://localhost:5173`。开发模式会启用本地 mock 插件，并将 `/admin` 请求代理到 `VITE_APP_BASE_URL`。
+
+## 常用命令
+
+| 命令 | 说明 |
+| --- | --- |
+| `npm run dev` | 启动本地开发服务器 |
+| `npm run build` | 构建生产产物到 `dist/` |
+| `npm run preview` | 本地预览生产构建 |
+| `npm run lint` | 检查 `src/` 中的 ESLint 问题 |
+| `npm run fix` | 自动修复可修复的 ESLint 问题 |
+| `npm run format` | 使用 Prettier 格式化前端文件 |
+| `npm run lint:style` | 检查并修复样式问题 |
+
+## 目录结构
+
+```text
+rentHouseAdmin/
+├── mock/                    # 本地 mock 接口
+├── public/                  # 静态资源
+├── src/
+│   ├── api/                 # 后端 API 请求封装
+│   ├── assets/              # 图片、图标和字体
+│   ├── components/          # 通用组件
+│   ├── config/              # 全局前端配置
+│   ├── directives/          # Vue 指令
+│   ├── enums/               # 枚举和常量
+│   ├── hooks/               # 组合式函数
+│   ├── layouts/             # 管理后台布局
+│   ├── router/              # 路由配置
+│   ├── store/               # Pinia 状态管理
+│   ├── styles/              # 全局样式
+│   ├── typings/             # TypeScript 类型声明
+│   ├── utils/               # 通用工具
+│   └── views/               # 业务页面
+├── .env.example             # 本地环境变量模板
+├── package.json             # npm 依赖与命令
+└── vite.config.ts           # Vite 配置
+```
+
+## 质量检查
+
+提交前至少执行：
 
 ```bash
-npm run build:prod
+npm run lint
+npm run build
 ```
 
-
-## 功能介绍
-
-- 使用 Vue3.2.45 + TypeScript 开发
-- 采用 Vite4.0 作为项目开发、打包工具（配置 Gzip 打包、TSX 语法、跨域代理……）
-- 使用 Prettier 统一格式化代码，集成 Eslint、Stylelint 代码校验规范
-- 使用 husky、lint-staged、commitlint、commitizen、cz-git 规范提交信息
-- 使用 Pinia 替代 Vuex，轻量、简单、易用， 集成 Pinia 持久化插件
-- 使用 TypeScript 对 Axios 整个二次封装
-- 基于 Element-plus 二次封装 [ProTable](https://juejin.cn/post/7166068828202336263) 组件，基于配置化去开发常用的表格。
-- 支持页面全屏展示
-- 支持菜单权限的配置和管理
-- 支持三种方式（指令，hooks，组件）的按钮级别的权限控制
-- 支持暗黑模式的切换
-- 支持自定义主题切换
-- 支持 i18n 国际化
-- 自定义指令开发
-
-## 文件目录介绍
-
-```
-guiug-sph-mall-admin
-├─ .husky                 # husky 配置文件
-├─ .vscode                # VSCode 推荐配置
-├─ mock                   # mock数据
-├─ public                 # 静态资源文件（该文件夹不会被打包）
-├─ scripts                # 脚本文件
-├─ src
-│  ├─ api                 # API 接口管理
-│  ├─ assets              # 静态资源文件
-│  ├─ components          # 全局组件
-│  ├─ config              # 全局配置项
-│  ├─ directives          # 全局指令文件
-│  ├─ enums               # 项目常用枚举
-│  ├─ hooks               # 常用 Hooks 封装
-│  ├─ languages           # 语言国际化 i18n
-│  ├─ layouts             # 框架布局模块
-│  ├─ routers             # 路由管理
-│  ├─ stores              # pinia store
-│  ├─ styles              # 全局样式文件
-│  ├─ typings             # 全局 ts 声明
-│  ├─ utils               # 常用工具库
-│  ├─ views               # 项目所有页面
-│  ├─ App.vue             # 项目主组件
-│  ├─ env.d.ts            # 指定 ts 识别 vue
-│  └─ main.ts             # 项目入口文件
-├─ .editorconfig          # 统一不同编辑器的编码风格
-├─ .env.development       # 开发环境配置
-├─ .env.production        # 生产环境配置
-├─ .env.test              # 测试环境配置
-├─ .eslintignore          # 忽略 Eslint 校验
-├─ .eslintrc.cjs          # Eslint 校验配置文件
-├─ .gitignore             # 忽略 git 提交
-├─ .prettierignore        # 忽略 Prettier 格式化
-├─ .prettierrc.json       # Prettier 格式化配置
-├─ .stylelintignore       # 忽略 stylelint 格式化
-├─ .stylelintrc.js        # stylelint 样式格式化配置
-├─ commitlint.config.js   # git 提交规范配置
-├─ index.html             # 入口 html
-├─ LICENSE                # 开源协议文件
-├─ lint-staged.config     # lint-staged 配置文件
-├─ npm-lock.json         # 依赖包包版本锁
-├─ package.json           # 依赖包管理
-├─ README.md              # README 介绍
-├─ STANDARD.md            # 项目编码规范说明书
-├─ tsconfig.json          # typescript 全局配置
-└─ vite.config.ts         # vite 全局配置文件
-```
-## 文档地址
-
-http://139.198.163.91:8080/doc.html#/home
-http://139.198.127.41:8080/doc.html#/home
-http://139.198.163.91:8081/doc.html#/home
+`node_modules/` 和 `dist/` 是本地生成内容，不会进入 Git 仓库。
