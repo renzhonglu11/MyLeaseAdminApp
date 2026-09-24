@@ -8,7 +8,7 @@
   <a href="README.md">English</a> | <strong>简体中文</strong>
 </p>
 
-Lease 是一个租赁管理平台，包含 Spring Boot 管理端 API 和面向租客的 API；当前工作区还包含一个单独进行版本管理的 Vue 管理后台。后端采用 Gradle 多项目结构，使用 MySQL、Redis 和 MinIO 分别提供数据持久化、缓存与对象存储能力。
+Lease 是一个租赁管理平台，包含 Spring Boot 管理端 API、面向租客的 API 和 Vue 管理后台。前后端在同一个仓库中进行版本管理。后端采用 Gradle 多项目结构，使用 MySQL、Redis 和 MinIO 分别提供数据持久化、缓存与对象存储能力。
 
 > [!NOTE]
 > 项目仍在持续开发中，部分 API 可能尚未完整实现或发生变更。
@@ -71,13 +71,13 @@ flowchart LR
 ├── web/
 │   ├── web-admin/                # 管理端 API
 │   └── web-app/                  # 租客端 API
-├── rentHouseAdmin/               # 单独版本管理的 Vue 管理后台检出目录
+├── rentHouseAdmin/               # Vue 管理后台
 ├── sql_scripts/lease.sql         # 数据库结构与示例数据
 ├── docker-compose.web-admin.yml  # 管理端 API 与基础设施编排
 └── build.gradle                  # Gradle 公共配置
 ```
 
-`rentHouseAdmin/` 拥有独立的 Git 历史，因此有意被后端仓库忽略。下文的前端命令假设配套前端项目已检出到该路径。
+`rentHouseAdmin/` 与后端一起进行版本管理。`node_modules/`、`dist/` 等前端生成内容以及本地 `.env*` 配置仍会被忽略。
 
 ## 使用 Docker 快速启动
 
@@ -126,6 +126,8 @@ docker compose --env-file .env -f docker-compose.web-admin.yml down
 打开另一个终端：
 
 ```bash
+cp rentHouseAdmin/.env.example rentHouseAdmin/.env.development
+# 如需使用地图功能，请替换高德地图占位配置。
 cd rentHouseAdmin
 npm ci
 npm run dev

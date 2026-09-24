@@ -8,7 +8,7 @@
   <strong>English</strong> | <a href="README.zh-CN.md">简体中文</a>
 </p>
 
-Lease is a rental management platform with a Spring Boot administration API and a resident-facing API. The current workspace also includes a separately versioned Vue administration console. The backend is organized as a Gradle multi-project build and uses MySQL, Redis, and MinIO for persistence, caching, and object storage.
+Lease is a rental management platform with a Spring Boot administration API, a resident-facing API, and a Vue administration console. The backend and frontend live in the same repository. The backend is organized as a Gradle multi-project build and uses MySQL, Redis, and MinIO for persistence, caching, and object storage.
 
 > [!NOTE]
 > This project is under active development. Some API surfaces may still be incomplete or change.
@@ -71,13 +71,13 @@ flowchart LR
 ├── web/
 │   ├── web-admin/                # Administration API
 │   └── web-app/                  # Resident-facing API
-├── rentHouseAdmin/               # Separate Vue administration-console checkout
+├── rentHouseAdmin/               # Vue administration console
 ├── sql_scripts/lease.sql         # Schema and sample data
 ├── docker-compose.web-admin.yml  # Admin API and infrastructure stack
 └── build.gradle                  # Shared Gradle configuration
 ```
 
-`rentHouseAdmin/` has its own Git history and is intentionally ignored by the backend repository. The frontend commands below assume that this companion checkout is present at that path.
+`rentHouseAdmin/` is versioned together with the backend. Generated frontend files such as `node_modules/` and `dist/`, plus local `.env*` files, remain ignored.
 
 ## Quick start with Docker
 
@@ -126,6 +126,8 @@ docker compose --env-file .env -f docker-compose.web-admin.yml down
 In another terminal:
 
 ```bash
+cp rentHouseAdmin/.env.example rentHouseAdmin/.env.development
+# Replace the AMap placeholders if map features are required.
 cd rentHouseAdmin
 npm ci
 npm run dev

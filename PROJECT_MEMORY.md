@@ -1,6 +1,6 @@
 # Project Memory
 
-Generated from the current workspace on 2026-04-17.
+Generated from the current workspace and updated on 2026-09-24.
 
 This file is a repo-derived snapshot, not a durable assistant memory store. It reflects:
 
@@ -10,7 +10,9 @@ This file is a repo-derived snapshot, not a durable assistant memory store. It r
 
 ## Current repo state
 
-- Git history is minimal: `f4d1f14 Initial project commit`
+- The backend and Vue administration console now share the root Git repository.
+- `rentHouseAdmin/` is no longer a nested Git checkout. Its former Git metadata was moved out of the workspace during the monorepo migration.
+- Frontend `node_modules/`, `dist/`, and local `.env*` files remain ignored. `rentHouseAdmin/.env.example` documents the required frontend variables without committing local AMap credentials.
 - There are uncommitted changes in the workspace. Do not assume all changes were made by the current assistant session.
 - Recent deployment-related changes added a Docker Compose setup for the admin backend:
   - `docker-compose.web-admin.yml`

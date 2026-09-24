@@ -18,9 +18,8 @@ Thumbs.db
 .env
 .env.*
 !.env.web-admin.example
+!rentHouseAdmin/.env.example
 application-local.yml
 application-local.properties
 **/application-local.yml
 **/application-local.properties
-
-rentHouseAdmin
