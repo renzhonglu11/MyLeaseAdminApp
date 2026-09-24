@@ -22,6 +22,8 @@ This file is a repo-derived snapshot, not a durable assistant memory store. It r
 - `web/web-admin/src/main/resources/application.yml` now reads DB, Redis, MinIO, and JWT values from environment variables while keeping local defaults.
 - Admin `JwtUtils` now reads `jwt.secret` from configuration instead of using only a hardcoded signing key.
 - The Docker Compose admin stack sets `SPRING_JPA_HIBERNATE_DDL_AUTO=none` by default because the sample schema is imported from `sql_scripts/lease.sql`; this avoids Hibernate schema-update attempts on production/startup.
+- MinIO now uses `MINIO_ENDPOINT` for backend access and `MINIO_PUBLIC_ENDPOINT` for browser image URLs. The admin apartment detail API translates older internal MinIO URLs when reading.
+- Admin apartment save resolves province/city/district names from region IDs; list APIs fill missing names for existing rows. The frontend detailed-address field supports manual entry when AMap suggestions are unavailable.
 
 ## Project shape
 

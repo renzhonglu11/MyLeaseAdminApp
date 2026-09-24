@@ -197,7 +197,8 @@ Authorization: Bearer <token>
 | `DB_USERNAME` | MySQL 用户名 | `root` |
 | `DB_PASSWORD` | MySQL 密码 | 空 |
 | `REDIS_HOST`、`REDIS_PORT`、`REDIS_PASSWORD` | Redis 连接 | `localhost:6379` |
-| `MINIO_ENDPOINT` | MinIO 地址 | `http://localhost:9000` |
+| `MINIO_ENDPOINT` | 后端连接 MinIO 的地址（Compose 内使用 `http://minio:9000`） | `http://localhost:9000` |
+| `MINIO_PUBLIC_ENDPOINT` | 浏览器访问图片的地址；远程访问时设为可从浏览器打开的主机名 | `http://localhost:9000` |
 | `MINIO_ACCESS_KEY`、`MINIO_SECRET_KEY` | MinIO 凭据 | 开发环境默认值 |
 | `MINIO_BUCKET_NAME` | 对象存储桶 | `lease-bucket` |
 | `JWT_SECRET` | 管理端 JWT 签名密钥 | 开发环境默认值 |

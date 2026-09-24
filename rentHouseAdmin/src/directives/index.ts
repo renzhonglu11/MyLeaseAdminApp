@@ -1,10 +1,4 @@
-/*
- * @Author: 朽木白
- * @Date: 2023-03-14 11:31:52
- * @LastEditors: 1547702880@@qq.com
- * @LastEditTime: 2023-03-14 11:46:57
- * @Description: 指令
- */
+
 import { App } from 'vue'
 import auth from './modules/auth'
 

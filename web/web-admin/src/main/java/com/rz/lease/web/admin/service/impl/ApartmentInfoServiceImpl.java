@@ -1,11 +1,15 @@
 package com.rz.lease.web.admin.service.impl;
 
 import com.rz.lease.common.exception.LeaseException;
+import com.rz.lease.common.minio.MinioProperties;
 import com.rz.lease.common.result.ResultCodeEnum;
 import com.rz.lease.model.entity.ApartmentFacility;
 import com.rz.lease.model.entity.ApartmentFeeValue;
 import com.rz.lease.model.entity.ApartmentInfo;
 import com.rz.lease.model.entity.ApartmentLabel;
+import com.rz.lease.model.entity.CityInfo;
+import com.rz.lease.model.entity.DistrictInfo;
+import com.rz.lease.model.entity.ProvinceInfo;
 import com.rz.lease.model.entity.FacilityInfo;
 import com.rz.lease.model.entity.FeeKey;
 import com.rz.lease.model.entity.FeeValue;
@@ -21,6 +25,9 @@ import com.rz.lease.web.admin.repository.ApartmentFacilityRepository;
 import com.rz.lease.web.admin.repository.ApartmentFeeValueRepository;
 import com.rz.lease.web.admin.repository.ApartmentLabelRepository;
 import com.rz.lease.web.admin.repository.ApartmentInfoRepository;
+import com.rz.lease.web.admin.repository.CityInfoRepository;
+import com.rz.lease.web.admin.repository.DistrictInfoRepository;
+import com.rz.lease.web.admin.repository.ProvinceInfoRepository;
 import com.rz.lease.web.admin.repository.FacilityInfoRepository;
 import com.rz.lease.web.admin.repository.FeeKeyRepository;
 import com.rz.lease.web.admin.repository.FeeValueRepository;
@@ -75,6 +82,14 @@ public class ApartmentInfoServiceImpl implements ApartmentInfoService {
     @Autowired
     private ApartmentInfoRepository apartmentInfoRepository;
     @Autowired
+    private MinioProperties minioProperties;
+    @Autowired
+    private ProvinceInfoRepository provinceInfoRepository;
+    @Autowired
+    private CityInfoRepository cityInfoRepository;
+    @Autowired
+    private DistrictInfoRepository districtInfoRepository;
+    @Autowired
     private ApartmentFacilityRepository apartmentFacilityRepository;
     @Autowired
     private ApartmentLabelRepository apartmentLabelRepository;
@@ -105,6 +120,7 @@ public class ApartmentInfoServiceImpl implements ApartmentInfoService {
         if (id == null) {
             apartmentInfo = new ApartmentInfo();
             BeanUtils.copyProperties(apartmentSubmitVo, apartmentInfo);
+            setRegionNames(apartmentInfo);
             apartmentInfo = apartmentInfoRepository.save(apartmentInfo);
         } else {
             apartmentInfo = apartmentInfoRepository.findById(id)
@@ -124,6 +140,7 @@ public class ApartmentInfoServiceImpl implements ApartmentInfoService {
             apartmentInfo.setPhone(apartmentSubmitVo.getPhone());
             apartmentInfo.setIsRelease(apartmentSubmitVo.getIsRelease());
 
+            setRegionNames(apartmentInfo);
             apartmentInfo = apartmentInfoRepository.save(apartmentInfo);
         }
 
@@ -162,12 +179,52 @@ public class ApartmentInfoServiceImpl implements ApartmentInfoService {
         List<ApartmentItemVo> items = apartments.stream().map(apartmentInfo -> {
             ApartmentItemVo itemVo = new ApartmentItemVo();
             BeanUtils.copyProperties(apartmentInfo, itemVo);
+            fillMissingRegionNames(itemVo);
             itemVo.setTotalRoomCount(totalRoomCountMap.getOrDefault(apartmentInfo.getId(), 0L));
             itemVo.setFreeRoomCount(freeRoomCountMap.getOrDefault(apartmentInfo.getId(), 0L));
             return itemVo;
         }).toList();
 
         return new PageImpl<>(items, pageRequest, apartmentPage.getTotalElements());
+    }
+
+    private void setRegionNames(ApartmentInfo apartmentInfo) {
+        if (apartmentInfo.getProvinceId() != null) {
+            provinceInfoRepository.findById(apartmentInfo.getProvinceId())
+                    .map(ProvinceInfo::getName)
+                    .ifPresent(apartmentInfo::setProvinceName);
+        }
+        if (apartmentInfo.getCityId() != null) {
+            cityInfoRepository.findById(apartmentInfo.getCityId())
+                    .map(CityInfo::getName)
+                    .ifPresent(apartmentInfo::setCityName);
+        }
+        if (apartmentInfo.getDistrictId() != null) {
+            districtInfoRepository.findById(apartmentInfo.getDistrictId())
+                    .map(DistrictInfo::getName)
+                    .ifPresent(apartmentInfo::setDistrictName);
+        }
+    }
+
+    private void fillMissingRegionNames(ApartmentItemVo itemVo) {
+        if ((itemVo.getProvinceName() == null || itemVo.getProvinceName().isBlank())
+                && itemVo.getProvinceId() != null) {
+            provinceInfoRepository.findById(itemVo.getProvinceId())
+                    .map(ProvinceInfo::getName)
+                    .ifPresent(itemVo::setProvinceName);
+        }
+        if ((itemVo.getCityName() == null || itemVo.getCityName().isBlank())
+                && itemVo.getCityId() != null) {
+            cityInfoRepository.findById(itemVo.getCityId())
+                    .map(CityInfo::getName)
+                    .ifPresent(itemVo::setCityName);
+        }
+        if ((itemVo.getDistrictName() == null || itemVo.getDistrictName().isBlank())
+                && itemVo.getDistrictId() != null) {
+            districtInfoRepository.findById(itemVo.getDistrictId())
+                    .map(DistrictInfo::getName)
+                    .ifPresent(itemVo::setDistrictName);
+        }
     }
 
     private void deleteExistingRelations(Long apartmentId) {
@@ -329,7 +386,7 @@ public class ApartmentInfoServiceImpl implements ApartmentInfoService {
                 .stream()
                 .map(graphInfo -> GraphVo.builder()
                         .name(graphInfo.getName())
-                        .url(graphInfo.getUrl())
+                        .url(minioProperties.toPublicUrl(graphInfo.getUrl()))
                         .build())
                 .toList();
         detailVo.setGraphVoList(graphVoList);
@@ -446,6 +503,7 @@ public class ApartmentInfoServiceImpl implements ApartmentInfoService {
         return apartmentInfos.stream().map(apartmentInfo -> {
             ApartmentItemVo itemVo = new ApartmentItemVo();
             BeanUtils.copyProperties(apartmentInfo, itemVo);
+            fillMissingRegionNames(itemVo);
             itemVo.setTotalRoomCount(totalRoomCountMap.getOrDefault(apartmentInfo.getId(), 0L));
             itemVo.setFreeRoomCount(freeRoomCountMap.getOrDefault(apartmentInfo.getId(), 0L));
             return itemVo;

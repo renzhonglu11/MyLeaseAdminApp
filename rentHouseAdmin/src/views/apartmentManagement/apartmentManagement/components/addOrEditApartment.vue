@@ -72,23 +72,16 @@
         </div>
       </el-form-item>
       <el-form-item label="详细地址" prop="addressDetail">
-        <el-select
+        <el-autocomplete
           v-model="formData.addressDetail"
-          filterable
-          remote
           clearable
-          placeholder="请输入详细地址查询"
-          :remote-method="remoteMethod"
+          placeholder="请输入详细地址，可选择搜索建议"
+          :fetch-suggestions="searchAddressSuggestions"
+          :trigger-on-focus="false"
           style="width: 100%"
-          @change="addressDetailChangeCallback"
-        >
-          <el-option
-            v-for="item in addressDetailOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
-        </el-select>
+          @input="clearAddressLocation"
+          @select="addressDetailChangeCallback"
+        />
       </el-form-item>
       <el-form-item label="公寓前台电话" prop="phone">
         <el-input v-model="formData.phone" />
@@ -259,7 +252,7 @@ const rules = reactive({
   cityId: [{ required: true, message: '请选择城市', trigger: 'change' }],
   districtId: [{ required: true, message: '请选择区域', trigger: 'change' }],
   addressDetail: [
-    { required: true, message: '请选择详细地址', trigger: 'change' },
+    { required: true, message: '请输入详细地址', trigger: 'blur' },
   ],
   phone: [{ required: true, message: '请输入公寓前台电话', trigger: 'blur' }],
   graphVoList: [{ required: true, message: '请上传图片', trigger: 'change' }],
@@ -364,64 +357,49 @@ const districtClearCallback = () => {
 
 //#endregion
 //#region <高德地图相关>
-// 详细地址建议列表
-const addressDetailOptions = ref<AddressOptionsInterface[]>([])
-
 // 地图实例
 const { AMap, isMapReady } = useMap()
-// 动态地址改查询
-function remoteMethod(keywords: string) {
-  if (!isMapReady.value || !AMap.value?.plugin) {
-    addressDetailOptions.value = []
+// 地图不可用时仍允许手动填写详细地址
+function searchAddressSuggestions(
+  keywords: string,
+  callback: (suggestions: AddressOptionsInterface[]) => void,
+) {
+  if (!keywords.trim() || !isMapReady.value || !AMap.value?.plugin) {
+    callback([])
     return
   }
-  if (keywords.trim()) {
-    const provinceName =
-      areaInfo.provinceList.find(
-        (item) => item.id === formData.value.provinceId,
-      )?.name || ''
-
-    const districtName =
-      areaInfo.districtList.find(
-        (item) => item.id === formData.value.districtId,
-      )?.name || ''
-    keywords = provinceName + districtName + keywords
-    AMap.value.plugin('AMap.AutoComplete', function () {
-      // 实例化Autocomplete
-      let autoOptions = {
-        city: '全国',
+  const provinceName =
+    areaInfo.provinceList.find((item) => item.id === formData.value.provinceId)
+      ?.name || ''
+  const districtName =
+    areaInfo.districtList.find((item) => item.id === formData.value.districtId)
+      ?.name || ''
+  const searchText = provinceName + districtName + keywords
+  AMap.value.plugin('AMap.AutoComplete', function () {
+    const autoComplete = new AMap.value.AutoComplete({ city: '全国' })
+    autoComplete.search(searchText, function (status: string, result: any) {
+      if (status !== 'complete') {
+        callback([])
+        return
       }
-      console.log('AMap', AMap.value)
-      console.log('keywords', keywords)
-      let autoComplete = new AMap.value.AutoComplete(autoOptions)
-      autoComplete.search(keywords, function (status: any, result: any) {
-        // 搜索成功时，result即是对应的匹配数据
-        console.log('result', result)
-        addressDetailOptions.value =
-          result?.tips?.map((item: any) => {
-            return {
-              label: item.district + item.name + item.address,
-              value: item.district + item.name + item.address,
-              location: item.location,
-            }
-          }) || []
+      const suggestions = (result?.tips || []).map((item: any) => {
+        const value = [item.district, item.name, item.address]
+          .filter(Boolean)
+          .join('')
+        return { label: value, value, location: item.location }
       })
+      callback(suggestions)
     })
-  } else {
-    addressDetailOptions.value = []
-  }
+  })
 }
-// 详细地址改变回调
-function addressDetailChangeCallback(value: string | number) {
-  const targetObj = addressDetailOptions.value.find(
-    (item) => item.value === value,
-  )
-  if (targetObj) {
-    // lng  经度
-    formData.value.longitude = targetObj.location?.lng || ''
-    // lat  纬度
-    formData.value.latitude = targetObj.location?.lat || ''
-  }
+function clearAddressLocation() {
+  formData.value.longitude = ''
+  formData.value.latitude = ''
+}
+// 选择地图建议时保存经纬度
+function addressDetailChangeCallback(address: Record<string, any>) {
+  formData.value.longitude = address.location?.lng || ''
+  formData.value.latitude = address.location?.lat || ''
 }
 //#endregion
 //#region <配套信息、标签信息、杂费信息>
@@ -516,16 +494,6 @@ async function getApartmentInfoByIdHandle(id: number | string) {
     delete data.labelInfoList
     data.feeValueIds = data.feeValueVoList?.map((item) => item.id) as number[]
     delete data.feeValueVoList
-    addressDetailOptions.value = [
-      {
-        label: data.addressDetail,
-        value: data.addressDetail,
-        location: {
-          lng: data.longitude,
-          lat: data.latitude,
-        },
-      },
-    ]
     formData.value = data as FormDataInstance
     // 重置省市区
     // 获取城市

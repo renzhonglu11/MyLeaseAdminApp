@@ -1,10 +1,4 @@
-/*
- * @Author: 朽木白
- * @Date: 2023-02-06 11:02:58
- * @LastEditors: 1547702880@@qq.com
- * @LastEditTime: 2023-03-25 09:55:02
- * @Description: axios请求封装
- */
+
 import axios from 'axios'
 import type {
   AxiosInstance,

@@ -1,10 +1,3 @@
-/*
- * @Author: 朽木白
- * @Date: 2023-02-24 11:28:38
- * @LastEditors: 1547702880@@qq.com
- * @LastEditTime: 2023-03-15 09:43:13
- * @Description: 系统设置
- */
 
 import { defineStore } from 'pinia'
 import { DEFAULT_PRIMARY } from '@/config/config'

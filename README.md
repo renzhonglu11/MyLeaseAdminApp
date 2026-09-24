@@ -197,7 +197,8 @@ The administration API supports these primary environment variables:
 | `DB_USERNAME` | MySQL user | `root` |
 | `DB_PASSWORD` | MySQL password | Empty |
 | `REDIS_HOST`, `REDIS_PORT`, `REDIS_PASSWORD` | Redis connection | `localhost:6379` |
-| `MINIO_ENDPOINT` | MinIO endpoint | `http://localhost:9000` |
+| `MINIO_ENDPOINT` | MinIO endpoint used by the backend (`http://minio:9000` in Compose) | `http://localhost:9000` |
+| `MINIO_PUBLIC_ENDPOINT` | Browser-accessible image endpoint; set a reachable host for remote access | `http://localhost:9000` |
 | `MINIO_ACCESS_KEY`, `MINIO_SECRET_KEY` | MinIO credentials | Development defaults |
 | `MINIO_BUCKET_NAME` | Object bucket | `lease-bucket` |
 | `JWT_SECRET` | Admin JWT signing secret | Development default |
