@@ -48,7 +48,7 @@ npm ci
 npm run dev
 ```
 
-Vite 默认开发地址为 `http://localhost:5173`。开发模式会启用本地 mock 插件，并将 `/admin` 请求代理到 `VITE_APP_BASE_URL`。
+Vite 默认开发地址为 `http://localhost:5173`。开发模式会将 `/admin` 请求代理到 `VITE_APP_BASE_URL`，登录及业务请求均使用真实后端 API。
 
 ## 常用命令
 
@@ -66,8 +66,6 @@ Vite 默认开发地址为 `http://localhost:5173`。开发模式会启用本地
 
 ```text
 rentHouseAdmin/
-├── mock/                    # 本地 mock 接口
-├── public/                  # 静态资源
 ├── src/
 │   ├── api/                 # 后端 API 请求封装
 │   ├── assets/              # 图片、图标和字体

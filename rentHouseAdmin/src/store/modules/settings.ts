@@ -1,4 +1,3 @@
-
 import { defineStore } from 'pinia'
 import { DEFAULT_PRIMARY } from '@/config/config'
 import type { SettingsState, ThemeConfigProps } from './model/settingsModel'

@@ -5,7 +5,6 @@ declare module '*.vue' {
   const component: DefineComponent<{}, {}, any>
   export default component
 }
-declare module 'mockjs'
 declare module 'virtual:svg-icons-names' {
   // eslint-disable-next-line
   const iconsNames: string[]

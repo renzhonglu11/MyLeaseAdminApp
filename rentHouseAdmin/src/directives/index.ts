@@ -1,4 +1,3 @@
-
 import { App } from 'vue'
 import auth from './modules/auth'
 

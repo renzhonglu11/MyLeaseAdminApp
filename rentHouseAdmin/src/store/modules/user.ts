@@ -1,4 +1,3 @@
-
 import { defineStore } from 'pinia'
 import type { UserState } from './model/userModel'
 import type { UserInfo } from '@/api/user/types'

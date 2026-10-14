@@ -1,5 +1,3 @@
-
-
 import mitt from 'mitt'
 
 const mittBus = mitt()

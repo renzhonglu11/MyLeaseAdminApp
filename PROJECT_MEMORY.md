@@ -1,6 +1,6 @@
 # Project Memory
 
-Generated from the current workspace and updated on 2026-09-24.
+Generated from the workspace and updated on 2026-10-14. The cleanup section below reflects the latest verification; earlier feature notes originate from the September snapshot and should be checked against current source before further implementation work.
 
 This file is a repo-derived snapshot, not a durable assistant memory store. It reflects:
 
@@ -13,7 +13,7 @@ This file is a repo-derived snapshot, not a durable assistant memory store. It r
 - The backend and Vue administration console now share the root Git repository.
 - `rentHouseAdmin/` is no longer a nested Git checkout. Its former Git metadata was moved out of the workspace during the monorepo migration.
 - Frontend `node_modules/`, `dist/`, and local `.env*` files remain ignored. `rentHouseAdmin/.env.example` documents the required frontend variables without committing local AMap credentials.
-- There are uncommitted changes in the workspace. Do not assume all changes were made by the current assistant session.
+- Check `git status` before making changes; working-tree state varies between sessions, and existing changes may originate from earlier work.
 - Recent deployment-related changes added a Docker Compose setup for the admin backend:
   - `docker-compose.web-admin.yml`
   - `web/web-admin/Dockerfile`
@@ -24,6 +24,28 @@ This file is a repo-derived snapshot, not a durable assistant memory store. It r
 - The Docker Compose admin stack sets `SPRING_JPA_HIBERNATE_DDL_AUTO=none` by default because the sample schema is imported from `sql_scripts/lease.sql`; this avoids Hibernate schema-update attempts on production/startup.
 - MinIO now uses `MINIO_ENDPOINT` for backend access and `MINIO_PUBLIC_ENDPOINT` for browser image URLs. The admin apartment detail API translates older internal MinIO URLs when reading.
 - Admin apartment save resolves province/city/district names from region IDs; list APIs fill missing names for existing rows. The frontend detailed-address field supports manual entry when AMap suggestions are unavailable.
+
+## Repository cleanup (2026-10-14)
+
+- Before cleanup, the only untracked content was `docs/`. The existing `docs/RABBITMQ_APPOINTMENT_NOTIFICATION_PLAN.md` was preserved.
+- Removed 25 tracked files confirmed to be unused or redundant:
+  - Backend: the fully commented-out `HomeController.java` and the one-off `GeneratePassword.java` debugging program.
+  - Frontend: the placeholder template page/API, unused dynamic/table/menu components, their unused pagination hook, unused auth/cache/validation utilities and progress configuration, and the old mock client/server files.
+  - Assets/docs: the unused root apartment image, Vue starter logo, unused 401 image, duplicated public logo and table empty-state image, and the upstream template changelog.
+- Removed 22 empty source/resource directories, including the old `my_project` test package, `common` test scaffolding, and empty app mapper/interceptor/region-VO directories. The main `my_project` directory had already been removed before this cleanup.
+- Both table components now use `src/assets/images/notData.png`. The favicon and Vue components share `src/assets/images/logo.png`; Vite hashes and packages the favicon correctly.
+- `SearchForm` now imports `Grid` and `GridItem` through the existing `Grid/index.ts` exports.
+- Removed the unused Vite mock plugin/configuration, `mockjs`, and `vite-plugin-mock`. npm removed 45 package records from the lockfile without changing any remaining dependency versions. The frontend README now describes real backend requests.
+- Removed the unused Guava version-catalog entry and leading blank lines causing ESLint failures in 10 TypeScript files.
+- Gradle clean removed stale module outputs, including old `model` application ZIP/TAR distributions. Removed approximately 87 MB of obsolete root configuration-cache reports. Fresh backend JARs and frontend `dist/` were rebuilt and remain ignored.
+- Shared `model`/`common` modules, the `web` aggregator, Spring-managed components, application configuration, SQL initialization, Gradle wrapper, license, local tooling, and dependency caches were retained.
+- Validation passed:
+  - `./gradlew clean assemble testClasses --offline --no-daemon --no-configuration-cache` (both backend applications packaged; existing test sources compiled).
+  - `npm run build` and `npm run lint` in `rentHouseAdmin`.
+  - Explicit ESLint checks for the changed Vue components and `vite.config.ts`.
+  - Package/lockfile consistency and built favicon/JAR contents.
+- The existing database-backed `ScheduleTaskTest` was not executed during cleanup; it invokes lease-status updates against the configured database. Existing Lombok and frontend bundle-size warnings remain.
+- Deleted source/assets were backed up temporarily under `/tmp/lease-cleanup-20261014`; tracked files can also be recovered from Git.
 
 ## Project shape
 
@@ -212,13 +234,4 @@ If I continue working in this repo, the safest assumptions are:
 
 ## Limitations
 
-I cannot reconstruct a true historical list of "everything implemented until now" from assistant memory because this repo only shows:
-
-- one initial commit
-- the current working tree
-
-If you want, I can also generate a second markdown file that is narrower and more actionable, for example:
-
-- `IMPLEMENTATION_LOG.md` from current git diff only
-- `ARCHITECTURE_NOTES.md` from repo structure only
-- `APARTMENT_MODULE_MEMORY.md` focused just on the apartment flow
+This document is a source-derived snapshot, not a complete implementation history. Earlier references to in-progress or uncommitted feature work describe the September snapshot. Use current source, `git log`, and `git diff` to establish the latest feature state and distinguish historical changes from the current cleanup.

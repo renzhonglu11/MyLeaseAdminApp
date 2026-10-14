@@ -1,6 +1,4 @@
-
 import http from '@/utils/http'
-// import http from '@/utils/http/httpMock'
 import type { LoginData, UserInfo } from './types'
 import { ValidateUCodeData } from './types'
 

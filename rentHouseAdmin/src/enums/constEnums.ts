@@ -1,4 +1,3 @@
-
 export function getLabelByValue(
   arr: {
     label: string

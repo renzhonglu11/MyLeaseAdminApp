@@ -1,4 +1,3 @@
-
 export interface PageResponseInterface<T> {
   records: T
   total: number

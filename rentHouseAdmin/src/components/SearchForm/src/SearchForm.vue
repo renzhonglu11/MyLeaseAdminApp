@@ -48,8 +48,7 @@ import { Delete, Search, ArrowDown, ArrowUp } from '@element-plus/icons-vue'
 import type { ColumnProps } from '@/components/ProTable/src/types'
 import type { BreakPoint } from '@/components/Grid/src/types'
 
-import Grid from '@/components/Grid/src/Grid.vue'
-import GridItem from '@/components/Grid/src/components/GridItem.vue'
+import { Grid, GridItem } from '@/components/Grid'
 import SearchFormItem from './components/SearchFormItem.vue'
 
 interface ProTableProps {
