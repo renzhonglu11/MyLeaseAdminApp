@@ -3,8 +3,7 @@ package com.rz.lease.web.admin.service.impl;
 import com.rz.lease.common.constant.RedisConstant;
 import com.rz.lease.common.exception.LeaseException;
 import com.rz.lease.common.result.ResultCodeEnum;
-import com.rz.lease.model.entity.SystemUser;
-import com.rz.lease.web.admin.repository.SystemUserRepository;
+import com.rz.lease.web.admin.security.AdminUserPrincipal;
 import com.rz.lease.web.admin.security.JwtUtils;
 import com.rz.lease.web.admin.service.LoginService;
 import com.rz.lease.web.admin.vo.login.CaptchaVo;
@@ -21,6 +20,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 
@@ -38,8 +38,6 @@ public class LoginServiceImpl implements LoginService {
     private AuthenticationManager authenticationManager;
     @Autowired
     private JwtUtils jwtUtils;
-    @Autowired
-    private SystemUserRepository systemUserRepository;
 
     @Override
     public CaptchaVo getCaptcha() {
@@ -68,13 +66,16 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public String login(LoginVo loginVo) {
+        // get the captcha code from the user input
         if (loginVo.getCaptchaCode() == null) {
             throw new LeaseException(ResultCodeEnum.ADMIN_CAPTCHA_CODE_NOT_FOUND);
         }
+        // get the captcha key from the user input
         String captchaKey = loginVo.getCaptchaKey();
         if (captchaKey == null || captchaKey.isBlank()) {
             throw new LeaseException(ResultCodeEnum.ADMIN_CAPTCHA_CODE_NOT_FOUND);
         }
+        // get the actual captcha code from Redis using the captcha key
         String code = stringRedisTemplate.opsForValue().get(captchaKey);
         if (code == null) {
             throw new LeaseException(ResultCodeEnum.ADMIN_CAPTCHA_CODE_EXPIRED);
@@ -84,6 +85,8 @@ public class LoginServiceImpl implements LoginService {
             throw new LeaseException(ResultCodeEnum.ADMIN_CAPTCHA_CODE_ERROR);
         }
 
+        // authenticate the username and password using Spring Security's
+        // AuthenticationManager
         String username = loginVo.getUsername();
         String password = loginVo.getPassword();
         if (username == null || username.isBlank() || password == null || password.isBlank()) {
@@ -91,8 +94,9 @@ public class LoginServiceImpl implements LoginService {
         }
 
         String normalizedUsername = username.trim();
+        Authentication authentication;
         try {
-            authenticationManager.authenticate(
+            authentication = authenticationManager.authenticate(
                     UsernamePasswordAuthenticationToken.unauthenticated(normalizedUsername, password));
         } catch (BadCredentialsException ex) {
             throw new LeaseException(ResultCodeEnum.ADMIN_ACCOUNT_ERROR);
@@ -100,10 +104,7 @@ public class LoginServiceImpl implements LoginService {
             throw new LeaseException(ResultCodeEnum.ADMIN_ACCOUNT_DISABLED_ERROR);
         }
 
-        SystemUser systemUser = systemUserRepository.findActiveByUsername(normalizedUsername)
-                .orElseThrow(() -> new LeaseException(ResultCodeEnum.ADMIN_ACCOUNT_ERROR));
-
-        return jwtUtils.generateToken(normalizedUsername, systemUser.getId());
-
+        AdminUserPrincipal principal = (AdminUserPrincipal) authentication.getPrincipal();
+        return jwtUtils.generateToken(principal.getUsername(), principal.getId());
     }
 }
